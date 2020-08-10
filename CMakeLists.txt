@@ -6,7 +6,7 @@ set( HOUIO_VERSION 0.1 )
 set(CMAKE_DEBUG_POSTFIX "d")
 INCLUDE_DIRECTORIES ( include )
 
-ADD_LIBRARY ( houio STATIC
+ADD_LIBRARY ( houio
   src/Attribute.cpp
   src/Field.cpp
   src/math/Color.cpp
@@ -53,4 +53,3 @@ install( FILES cmake/houio-config.cmake "${CMAKE_CURRENT_BINARY_DIR}/houio/houio
 
 # tests -----------
 add_subdirectory( tests )
-
