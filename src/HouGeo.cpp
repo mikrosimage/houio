@@ -285,12 +285,36 @@ namespace houio
 		return numElements++;
 	}
 
+	std::string HouGeo::HouAttribute::getUniqueString( int index )const
+	{
+		if(strings.size() < index)
+			throw std::runtime_error("HouGeo::getString Index is out of strings range.");
+		return strings[index];
+	}
+
 	std::string HouGeo::HouAttribute::getString( int index )const
 	{
 		if(stringsIdxs.size() < index)
-			throw std::runtime_error("HouGeo::getString Index is out of stringsIdx range.");
-		int string_index = stringsIdxs[index];
+			throw std::runtime_error("HouGeo::getString Index is out of strings range.");
+		const int string_index = stringsIdxs[index];
 		return strings[string_index];
+	}
+
+	int HouGeo::HouAttribute::getStringIndex( int index )const
+	{
+		if(stringsIdxs.size() < index)
+			throw std::runtime_error("HouGeo::getStringIndex Index is out of stringsIdx range.");
+		return stringsIdxs[index];
+	}
+
+	std::vector<std::string> HouGeo::HouAttribute::getUniqueStrings()const
+	{
+		return strings;
+	}
+
+	std::vector<int> HouGeo::HouAttribute::getStringIndices()const
+	{
+		return stringsIdxs;
 	}
 
 
@@ -395,13 +419,12 @@ namespace houio
 			json::ArrayPtr entries = o->getArray("sharedprimitivedata");
 
 			int numEntries = (int)entries->size()/2;
+			int index = 0;
 			for( int i=0;i<numEntries;++i )
 			{
-				int index = i*2;
-				std::string type_questionmark = entries->get<std::string>(index);
+				index = i*2;
 				json::ArrayPtr entry = entries->getArray(index+1);
 
-				std::string type2_questionmark = entry->get<std::string>(0);
 				std::string id = entry->get<std::string>(1);
 				json::ArrayPtr data = entry->getArray(2);
 
@@ -596,10 +619,11 @@ namespace houio
 			{
 				json::ArrayPtr stringsArray = attrData->getArray("strings");
 				int numElements = stringsArray->size();
+				std::string stringValue = "";
 				for( int i=0;i<numElements;++i )
 				{
-					std::string string = stringsArray->get<std::string>( i );
-					attr->strings.push_back(string);
+					stringValue = stringsArray->get<std::string>( i );
+					attr->strings.push_back(stringValue);
 				}
 				attr->numElements = numElements;
 			}
@@ -609,9 +633,10 @@ namespace houio
 				json::ObjectPtr indicesObject = toObject(attrData->getArray("indices"));
 				json::ArrayPtr indices = indicesObject->getArray("rawpagedata");
 				int numElements = indices->size();
+				int index = 0;
 				for( int i=0;i<numElements;++i )
 				{
-					int index = indices->get<int>(i);
+					index = indices->get<int>(i);
 					attr->stringsIdxs.push_back(index);
 				}
 				attr->numElements = numElements;
